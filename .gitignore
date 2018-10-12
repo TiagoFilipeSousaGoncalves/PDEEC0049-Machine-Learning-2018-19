@@ -35,3 +35,5 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+.DS_Store
+Assignments/.DS_Store
