@@ -141,7 +141,7 @@
     \def\gt{>}
     \def\lt{<}
     % Document parameters
-    \title{HW5\_TiagoGoncalves}
+    \title{HW5\_TiagoGoncalves\_Exc3}
     
     
     
@@ -280,266 +280,113 @@
     
 
     
+    \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Consider a HMM with continuous outputs.
+\end{enumerate}
+
+Assume that the HMM only has two states; both states have the same
+initial probability; the probability of changing between different
+states is 0.1 (that is, the transition matrix is symmetric with 0.9 in
+the elements in the main diagonal). The emission density function for
+state 1 follows a Laplace distribution with mean 0 and standard
+deviation 0.2. For state 2 the emission density function is uniform in
+{[}0, 1{]}. Change the code provided in the class (file hmmTest.m /
+hmmTest.py) to compute the probability of the following sequence of
+length 10: \{0.7, 0.7, 0.1, 0.2, 0.3, 0.6, 0.2, 0.3, −0.1, 0.2\}.
+
+Send the modified file and write the computed probability.
+
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}5}]:} \PY{c+c1}{\PYZsh{}Exercise 1}
-        \PY{c+c1}{\PYZsh{}a) }
+{\color{incolor}In [{\color{incolor}1}]:} \PY{c+c1}{\PYZsh{}Start by defining probability distribution functions}
+        \PY{k+kn}{import} \PY{n+nn}{math}
         \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
-        \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
-        \PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{cluster} \PY{k}{import} \PY{n}{KMeans}
+        \PY{c+c1}{\PYZsh{}Laplace Distribution Function}
+        \PY{c+c1}{\PYZsh{}ref: http://mathworld.wolfram.com/LaplaceDistribution.html}
+        \PY{k}{def} \PY{n+nf}{laplace}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{mean}\PY{p}{,} \PY{n}{standard\PYZus{}deviation}\PY{p}{)}\PY{p}{:}
+            \PY{n}{scale} \PY{o}{=} \PY{n}{math}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{p}{(}\PY{n}{standard\PYZus{}deviation}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{)}\PY{o}{/}\PY{l+m+mi}{2}\PY{p}{)}
+            \PY{k}{return} \PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{n+nb}{abs}\PY{p}{(}\PY{n}{x}\PY{o}{\PYZhy{}}\PY{n}{mean}\PY{p}{)}\PY{o}{/}\PY{n}{scale}\PY{p}{)}\PY{o}{/}\PY{p}{(}\PY{l+m+mf}{2.}\PY{o}{*}\PY{n}{scale}\PY{p}{)}
         
-        \PY{c+c1}{\PYZsh{}Load Data}
-        \PY{n}{data} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{genfromtxt}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{heightWeightData.txt}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{,}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-        
-        \PY{c+c1}{\PYZsh{}Split Data into Labels and Features}
-        \PY{c+c1}{\PYZsh{}Convert labels into 0\PYZhy{}1}
-        \PY{n}{labels} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}
-        \PY{c+c1}{\PYZsh{}Features}
-        \PY{n}{features} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{:}\PY{l+m+mi}{3}\PY{p}{]}
-        
-        \PY{c+c1}{\PYZsh{}Create Classifier K\PYZhy{}Means, with K=2}
-        \PY{n}{kmeans} \PY{o}{=} \PY{n}{KMeans}\PY{p}{(}\PY{n}{n\PYZus{}clusters}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
-        \PY{c+c1}{\PYZsh{}Obtain clusters with k\PYZhy{}means classifier}
-        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Fitting data....}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-        \PY{n}{kmeans}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{features}\PY{p}{)}
-        \PY{c+c1}{\PYZsh{}Make predictions on our data}
-        \PY{c+c1}{\PYZsh{}Predictions}
-        \PY{n}{y\PYZus{}hat} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{kmeans}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{features}\PY{p}{)}\PY{p}{)}
-        \PY{c+c1}{\PYZsh{}Compare predictions with ground truth}
-        \PY{c+c1}{\PYZsh{}Count elements of class 0 in labels}
-        \PY{n}{class\PYZus{}0} \PY{o}{=} \PY{l+m+mi}{0}
-        \PY{k}{for} \PY{n}{label} \PY{o+ow}{in} \PY{n}{labels}\PY{p}{:}
-            \PY{k}{if} \PY{n}{label}\PY{o}{==}\PY{l+m+mi}{0}\PY{p}{:}
-                \PY{n}{class\PYZus{}0}\PY{o}{+}\PY{o}{=}\PY{l+m+mi}{1}
-        
-        \PY{c+c1}{\PYZsh{}Count elements of class 0 in labels}
-        \PY{n}{class\PYZus{}1} \PY{o}{=} \PY{l+m+mi}{0}
-        \PY{k}{for} \PY{n}{label} \PY{o+ow}{in} \PY{n}{labels}\PY{p}{:}
-            \PY{k}{if} \PY{n}{label}\PY{o}{==}\PY{l+m+mi}{1}\PY{p}{:}
-                \PY{n}{class\PYZus{}1}\PY{o}{+}\PY{o}{=}\PY{l+m+mi}{1}
-        
-        \PY{c+c1}{\PYZsh{}Count elements of class 0 in labels}
-        \PY{n}{pred\PYZus{}0} \PY{o}{=} \PY{l+m+mi}{0}
-        \PY{k}{for} \PY{n}{label} \PY{o+ow}{in} \PY{n}{y\PYZus{}hat}\PY{p}{:}
-            \PY{k}{if} \PY{n}{label}\PY{o}{==}\PY{l+m+mi}{0}\PY{p}{:}
-                \PY{n}{pred\PYZus{}0}\PY{o}{+}\PY{o}{=}\PY{l+m+mi}{1}
-        
-        \PY{c+c1}{\PYZsh{}Count elements of class 0 in labels}
-        \PY{n}{pred\PYZus{}1} \PY{o}{=} \PY{l+m+mi}{0}
-        \PY{k}{for} \PY{n}{label} \PY{o+ow}{in} \PY{n}{y\PYZus{}hat}\PY{p}{:}
-            \PY{k}{if} \PY{n}{label}\PY{o}{==}\PY{l+m+mi}{1}\PY{p}{:}
-                \PY{n}{pred\PYZus{}1}\PY{o}{+}\PY{o}{=}\PY{l+m+mi}{1}
-                
-        \PY{c+c1}{\PYZsh{}Number of elements per class}
-        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Elements per class in original data: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Class 0: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{class\PYZus{}0}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Class 1: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{class\PYZus{}1}\PY{p}{)}
-        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Elements per cluster in predictions: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Cluster 0: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{pred\PYZus{}0}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Cluster 1: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{pred\PYZus{}1}\PY{p}{)}
-        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{According to the results, one can say that K\PYZhy{}Means algorithm, with K=2 performs well, when compared with the clusters of our data.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{}Uniform Distribution Function}
+        \PY{c+c1}{\PYZsh{}ref: https://docs.scipy.org/doc/numpy\PYZhy{}1.15.0/reference/generated/numpy.random.uniform.html\PYZsh{}numpy.random.uniform}
+        \PY{k}{def} \PY{n+nf}{uniform}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{low}\PY{p}{,} \PY{n}{high}\PY{p}{)}\PY{p}{:}
+            \PY{n}{probs} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{x}\PY{p}{:}
+                \PY{k}{if} \PY{n}{i}\PY{o}{\PYZgt{}}\PY{o}{=}\PY{n}{low} \PY{o+ow}{and} \PY{n}{i}\PY{o}{\PYZlt{}}\PY{o}{=}\PY{n}{high}\PY{p}{:}
+                    \PY{n}{probs}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{/}\PY{p}{(}\PY{n}{high}\PY{o}{\PYZhy{}}\PY{n}{low}\PY{p}{)}\PY{p}{)}
+                \PY{k}{else}\PY{p}{:}
+                    \PY{n}{probs}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{)}
+            \PY{k}{return} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{probs}\PY{p}{)}
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-Fitting data{\ldots}
-Elements per class in original data:  
-Class 0:  73 
-Class 1:  137
-Elements per cluster in predictions:  
-Cluster 0:  138 
-Cluster 1:  72
-According to the results, one can say that K-Means algorithm, with K=2 performs well, when compared with the clusters of our data.
-
-    \end{Verbatim}
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}2}]:} \PY{c+c1}{\PYZsh{}b)}
-        \PY{c+c1}{\PYZsh{}New approach from: https://github.com/alexkimxyz/XMeans/blob/master/xmeans.py}
-        
-        \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
-        \PY{l+s+sd}{Implementation of XMeans algorithm based on}
-        \PY{l+s+sd}{Pelleg, Dan, and Andrew W. Moore. \PYZdq{}X\PYZhy{}means: Extending K\PYZhy{}means with Efficient Estimation of the Number of Clusters.\PYZdq{}}
-        \PY{l+s+sd}{ICML. Vol. 1. 2000.}
-        \PY{l+s+sd}{https://www.cs.cmu.edu/\PYZti{}dpelleg/download/xmeans.pdf}
-        \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
-        
+{\color{incolor}In [{\color{incolor}2}]:} \PY{c+c1}{\PYZsh{}Change initial code}
+        \PY{k+kn}{import} \PY{n+nn}{math}
         \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
-        \PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{cluster} \PY{k}{import} \PY{n}{KMeans}
         
-        \PY{n}{EPS} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{finfo}\PY{p}{(}\PY{n+nb}{float}\PY{p}{)}\PY{o}{.}\PY{n}{eps}
+        \PY{c+c1}{\PYZsh{}xx = [int(c) for c in \PYZsq{}166562663611111122\PYZsq{}]}
+        \PY{n}{xx} \PY{o}{=} \PY{p}{[}\PY{l+m+mf}{0.7}\PY{p}{,} \PY{l+m+mf}{0.7}\PY{p}{,} \PY{l+m+mf}{0.1}\PY{p}{,} \PY{l+m+mf}{0.2}\PY{p}{,} \PY{l+m+mf}{0.3}\PY{p}{,} \PY{l+m+mf}{0.6}\PY{p}{,} \PY{l+m+mf}{0.2}\PY{p}{,} \PY{l+m+mf}{0.3}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mf}{0.1}\PY{p}{,} \PY{l+m+mf}{0.2}\PY{p}{]}
+        \PY{n}{xx} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{xx}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{The given sequence is: }\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{xx}\PY{p}{)}
         
+        \PY{n}{AA} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{p}{[}\PY{l+m+mf}{0.9}\PY{p}{,} \PY{l+m+mf}{0.1}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{l+m+mf}{0.1}\PY{p}{,} \PY{l+m+mf}{0.9}\PY{p}{]}\PY{p}{]}\PY{p}{)} \PY{c+c1}{\PYZsh{}transition matrix}
+        \PY{c+c1}{\PYZsh{}print(AA)}
+        \PY{n}{pi0} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{l+m+mf}{0.5}\PY{p}{,} \PY{l+m+mf}{0.5}\PY{p}{]}\PY{p}{)}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{k+kc}{None}\PY{p}{]} \PY{c+c1}{\PYZsh{}initial probs}
+        \PY{c+c1}{\PYZsh{}print(pi0)}
         
-        \PY{k}{def} \PY{n+nf}{loglikelihood}\PY{p}{(}\PY{n}{R}\PY{p}{,} \PY{n}{R\PYZus{}n}\PY{p}{,} \PY{n}{variance}\PY{p}{,} \PY{n}{M}\PY{p}{,} \PY{n}{K}\PY{p}{)}\PY{p}{:}
-            \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
-        \PY{l+s+sd}{    See Pelleg\PYZsq{}s and Moore\PYZsq{}s for more details.}
-        \PY{l+s+sd}{    :param R: (int) size of cluster}
-        \PY{l+s+sd}{    :param R\PYZus{}n: (int) size of cluster/subcluster}
-        \PY{l+s+sd}{    :param variance: (float) maximum likelihood estimate of variance under spherical Gaussian assumption}
-        \PY{l+s+sd}{    :param M: (float) number of features (dimensionality of the data)}
-        \PY{l+s+sd}{    :param K: (float) number of clusters for which loglikelihood is calculated}
-        \PY{l+s+sd}{    :return: (float) loglikelihood value}
-        \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
-            \PY{k}{if} \PY{l+m+mi}{0} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{variance} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{EPS}\PY{p}{:}
-                \PY{n}{res} \PY{o}{=} \PY{l+m+mi}{0}
-            \PY{k}{else}\PY{p}{:}
-                \PY{n}{res} \PY{o}{=} \PY{n}{R\PYZus{}n} \PY{o}{*} \PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{R\PYZus{}n}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{R}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{l+m+mf}{0.5} \PY{o}{*} \PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{l+m+mi}{2} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{pi}\PY{p}{)} \PY{o}{+} \PY{n}{M} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{variance}\PY{p}{)} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+m+mf}{0.5} \PY{o}{*} \PY{n}{K}
-                \PY{k}{if} \PY{n}{res} \PY{o}{==} \PY{n}{np}\PY{o}{.}\PY{n}{inf}\PY{p}{:}
-                    \PY{n}{res} \PY{o}{=} \PY{l+m+mi}{0}
-            \PY{k}{return} \PY{n}{res}
+        \PY{c+c1}{\PYZsh{}Probability Distributions}
+        \PY{c+c1}{\PYZsh{}Laplace}
+        \PY{n}{state1} \PY{o}{=} \PY{n}{laplace}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{n}{xx}\PY{p}{,} \PY{n}{mean}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{standard\PYZus{}deviation}\PY{o}{=}\PY{l+m+mf}{0.2}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{}Uniform}
+        \PY{n}{state2} \PY{o}{=} \PY{n}{uniform}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{n}{xx}\PY{p}{,} \PY{n}{low}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{high}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
         
+        \PY{n}{Px} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{vstack}\PY{p}{(}\PY{p}{(}\PY{n}{state1}\PY{p}{,} \PY{n}{state2}\PY{p}{)}\PY{p}{)} \PY{c+c1}{\PYZsh{} emission probs}
+        \PY{c+c1}{\PYZsh{}print(Px)}
+        \PY{n}{T} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{n}{xx}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{}print(T)}
         
-        \PY{k}{def} \PY{n+nf}{get\PYZus{}additonal\PYZus{}k\PYZus{}split}\PY{p}{(}\PY{n}{K}\PY{p}{,} \PY{n}{X}\PY{p}{,} \PY{n}{clst\PYZus{}labels}\PY{p}{,} \PY{n}{clst\PYZus{}centers}\PY{p}{,} \PY{n}{n\PYZus{}features}\PY{p}{,} \PY{n}{K\PYZus{}sub}\PY{p}{,} \PY{n}{k\PYZus{}means\PYZus{}args}\PY{p}{)}\PY{p}{:}
-            \PY{n}{bic\PYZus{}before\PYZus{}split} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n}{K}\PY{p}{)}
-            \PY{n}{bic\PYZus{}after\PYZus{}split} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n}{K}\PY{p}{)}
-            \PY{n}{clst\PYZus{}n\PYZus{}params} \PY{o}{=} \PY{n}{n\PYZus{}features} \PY{o}{+} \PY{l+m+mi}{1}
-            \PY{n}{add\PYZus{}k} \PY{o}{=} \PY{l+m+mi}{0}
-            \PY{k}{for} \PY{n}{clst\PYZus{}index} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{K}\PY{p}{)}\PY{p}{:}
-                \PY{n}{clst\PYZus{}points} \PY{o}{=} \PY{n}{X}\PY{p}{[}\PY{n}{clst\PYZus{}labels} \PY{o}{==} \PY{n}{clst\PYZus{}index}\PY{p}{]}
-                \PY{n}{clst\PYZus{}size} \PY{o}{=} \PY{n}{clst\PYZus{}points}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
-                \PY{k}{if} \PY{n}{clst\PYZus{}size} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{K\PYZus{}sub}\PY{p}{:}
-                    \PY{c+c1}{\PYZsh{} skip this cluster if it is too small}
-                    \PY{c+c1}{\PYZsh{} i.e. cannot be split into more clusters}
-                    \PY{k}{continue}
-                \PY{n}{clst\PYZus{}variance} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{(}\PY{n}{clst\PYZus{}points} \PY{o}{\PYZhy{}} \PY{n}{clst\PYZus{}centers}\PY{p}{[}\PY{n}{clst\PYZus{}index}\PY{p}{]}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)} \PY{o}{/} \PY{n+nb}{float}\PY{p}{(}\PY{n}{clst\PYZus{}size} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{)}
-                \PY{n}{bic\PYZus{}before\PYZus{}split}\PY{p}{[}\PY{n}{clst\PYZus{}index}\PY{p}{]} \PY{o}{=} \PY{n}{loglikelihood}\PY{p}{(}\PY{n}{clst\PYZus{}size}\PY{p}{,} \PY{n}{clst\PYZus{}size}\PY{p}{,} \PY{n}{clst\PYZus{}variance}\PY{p}{,} \PY{n}{n\PYZus{}features}\PY{p}{,}
-                                                             \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{clst\PYZus{}n\PYZus{}params} \PY{o}{/} \PY{l+m+mf}{2.0} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{clst\PYZus{}size}\PY{p}{)}
-                \PY{n}{kmeans\PYZus{}subclst} \PY{o}{=} \PY{n}{KMeans}\PY{p}{(}\PY{n}{n\PYZus{}clusters}\PY{o}{=}\PY{n}{K\PYZus{}sub}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{k\PYZus{}means\PYZus{}args}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{clst\PYZus{}points}\PY{p}{)}
-                \PY{n}{subclst\PYZus{}labels} \PY{o}{=} \PY{n}{kmeans\PYZus{}subclst}\PY{o}{.}\PY{n}{labels\PYZus{}}
-                \PY{n}{subclst\PYZus{}centers} \PY{o}{=} \PY{n}{kmeans\PYZus{}subclst}\PY{o}{.}\PY{n}{cluster\PYZus{}centers\PYZus{}}
-                \PY{n}{log\PYZus{}likelihood} \PY{o}{=} \PY{l+m+mi}{0}
-                \PY{k}{for} \PY{n}{subclst\PYZus{}index} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{K\PYZus{}sub}\PY{p}{)}\PY{p}{:}
-                    \PY{n}{subclst\PYZus{}points} \PY{o}{=} \PY{n}{clst\PYZus{}points}\PY{p}{[}\PY{n}{subclst\PYZus{}labels} \PY{o}{==} \PY{n}{subclst\PYZus{}index}\PY{p}{]}
-                    \PY{n}{subclst\PYZus{}size} \PY{o}{=} \PY{n}{subclst\PYZus{}points}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
-                    \PY{k}{if} \PY{n}{subclst\PYZus{}size} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{K\PYZus{}sub}\PY{p}{:}
-                        \PY{c+c1}{\PYZsh{} skip this subclst\PYZus{}size if it is too small}
-                        \PY{c+c1}{\PYZsh{} i.e. won\PYZsq{}t be splittable into more clusters on the next iteration}
-                        \PY{k}{continue}
-                    \PY{n}{subclst\PYZus{}variance} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{(}\PY{n}{subclst\PYZus{}points} \PY{o}{\PYZhy{}} \PY{n}{subclst\PYZus{}centers}\PY{p}{[}\PY{n}{subclst\PYZus{}index}\PY{p}{]}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)} \PY{o}{/} \PY{n+nb}{float}\PY{p}{(}
-                        \PY{n}{subclst\PYZus{}size} \PY{o}{\PYZhy{}} \PY{n}{K\PYZus{}sub}\PY{p}{)}
-                    \PY{n}{log\PYZus{}likelihood} \PY{o}{=} \PY{n}{log\PYZus{}likelihood} \PY{o}{+} \PY{n}{loglikelihood}\PY{p}{(}\PY{n}{clst\PYZus{}size}\PY{p}{,} \PY{n}{subclst\PYZus{}size}\PY{p}{,} \PY{n}{subclst\PYZus{}variance}\PY{p}{,} \PY{n}{n\PYZus{}features}\PY{p}{,}
-                                                                    \PY{n}{K\PYZus{}sub}\PY{p}{)}
-                \PY{n}{subclst\PYZus{}n\PYZus{}params} \PY{o}{=} \PY{n}{K\PYZus{}sub} \PY{o}{*} \PY{n}{clst\PYZus{}n\PYZus{}params}
-                \PY{n}{bic\PYZus{}after\PYZus{}split}\PY{p}{[}\PY{n}{clst\PYZus{}index}\PY{p}{]} \PY{o}{=} \PY{n}{log\PYZus{}likelihood} \PY{o}{\PYZhy{}} \PY{n}{subclst\PYZus{}n\PYZus{}params} \PY{o}{/} \PY{l+m+mf}{2.0} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{clst\PYZus{}size}\PY{p}{)}
-                \PY{c+c1}{\PYZsh{} Count number of additional clusters that need to be created based on BIC comparison}
-                \PY{k}{if} \PY{n}{bic\PYZus{}before\PYZus{}split}\PY{p}{[}\PY{n}{clst\PYZus{}index}\PY{p}{]} \PY{o}{\PYZlt{}} \PY{n}{bic\PYZus{}after\PYZus{}split}\PY{p}{[}\PY{n}{clst\PYZus{}index}\PY{p}{]}\PY{p}{:}
-                    \PY{n}{add\PYZus{}k} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
-            \PY{k}{return} \PY{n}{add\PYZus{}k}
+        \PY{n}{K} \PY{o}{=} \PY{l+m+mi}{2} \PY{c+c1}{\PYZsh{} number of states}
         
+        \PY{c+c1}{\PYZsh{} forward method \PYZhy{} slide 31}
+        \PY{n}{alpha}\PY{o}{=}\PY{n}{pi0}\PY{o}{*}\PY{n}{Px}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}
+        \PY{n}{allAlpha}\PY{o}{=}\PY{n}{alpha}\PY{p}{;} \PY{c+c1}{\PYZsh{} only needed for slide 40}
+        \PY{k}{for} \PY{n}{t} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{n}{T}\PY{p}{)}\PY{p}{:}
+            \PY{n}{alpha}\PY{o}{=}\PY{n}{Px}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{n}{t}\PY{p}{]}\PY{o}{*}\PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{AA}\PY{o}{.}\PY{n}{T}\PY{p}{,}\PY{n}{alpha}\PY{p}{)}
+            \PY{c+c1}{\PYZsh{}print(Px[:, t])}
+            \PY{n}{allAlpha} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{concatenate}\PY{p}{(}\PY{p}{(}\PY{n}{allAlpha}\PY{p}{,}\PY{n}{alpha}\PY{p}{)}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{)} \PY{c+c1}{\PYZsh{} only needed for slide 40}
         
-        \PY{k}{class} \PY{n+nc}{XMeans}\PY{p}{(}\PY{n}{KMeans}\PY{p}{)}\PY{p}{:}
-            \PY{k}{def} \PY{n+nf}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{kmax}\PY{o}{=}\PY{l+m+mi}{50}\PY{p}{,} \PY{n}{max\PYZus{}iter}\PY{o}{=}\PY{l+m+mi}{1000}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{k\PYZus{}means\PYZus{}args}\PY{p}{)}\PY{p}{:}
-                \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
-        \PY{l+s+sd}{        :param kmax: maximum number of clusters that XMeans can divide the data in}
-        \PY{l+s+sd}{        :param max\PYZus{}iter: maximum number of iterations for the `while` loop (hard limit)}
-        \PY{l+s+sd}{        :param k\PYZus{}means\PYZus{}args: all other parameters supported by sklearn\PYZsq{}s KMeans algo (except `n\PYZus{}clusters`)}
-        \PY{l+s+sd}{        \PYZdq{}\PYZdq{}\PYZdq{}}
-                \PY{k}{if} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{n\PYZus{}clusters}\PY{l+s+s1}{\PYZsq{}} \PY{o+ow}{in} \PY{n}{k\PYZus{}means\PYZus{}args}\PY{p}{:}
-                    \PY{k}{raise} \PY{n+ne}{Exception}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{`n\PYZus{}clusters` is not an accepted parameter for XMeans algorithm}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-                \PY{k}{if} \PY{n}{kmax} \PY{o}{\PYZlt{}} \PY{l+m+mi}{1}\PY{p}{:}
-                    \PY{k}{raise} \PY{n+ne}{Exception}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{`kmax` cannot be less than 1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-                \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{KMax} \PY{o}{=} \PY{n}{kmax}
-                \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{max\PYZus{}iter} \PY{o}{=} \PY{n}{max\PYZus{}iter}
-                \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{k\PYZus{}means\PYZus{}args} \PY{o}{=} \PY{n}{k\PYZus{}means\PYZus{}args}
-        
-            \PY{k}{def} \PY{n+nf}{fit}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{X}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{k+kc}{None}\PY{p}{)}\PY{p}{:}
-                \PY{n}{K} \PY{o}{=} \PY{l+m+mi}{1}
-                \PY{n}{K\PYZus{}sub} \PY{o}{=} \PY{l+m+mi}{2}
-                \PY{n}{K\PYZus{}old} \PY{o}{=} \PY{n}{K}
-                \PY{n}{n\PYZus{}features} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
-                \PY{n}{stop\PYZus{}splitting} \PY{o}{=} \PY{k+kc}{False}
-                \PY{n}{iter\PYZus{}num} \PY{o}{=} \PY{l+m+mi}{0}
-                \PY{k}{while} \PY{o+ow}{not} \PY{n}{stop\PYZus{}splitting} \PY{o+ow}{and} \PY{n}{iter\PYZus{}num} \PY{o}{\PYZlt{}} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{max\PYZus{}iter}\PY{p}{:}
-                    \PY{n}{K\PYZus{}old} \PY{o}{=} \PY{n}{K}
-                    \PY{n}{kmeans} \PY{o}{=} \PY{n}{KMeans}\PY{p}{(}\PY{n}{n\PYZus{}clusters}\PY{o}{=}\PY{n}{K}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{k\PYZus{}means\PYZus{}args}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X}\PY{p}{)}
-                    \PY{n}{clst\PYZus{}labels} \PY{o}{=} \PY{n}{kmeans}\PY{o}{.}\PY{n}{labels\PYZus{}}
-                    \PY{n}{clst\PYZus{}centers} \PY{o}{=} \PY{n}{kmeans}\PY{o}{.}\PY{n}{cluster\PYZus{}centers\PYZus{}}
-                    \PY{c+c1}{\PYZsh{} Iterate through all clusters and determine if further split is necessary}
-                    \PY{n}{add\PYZus{}k} \PY{o}{=} \PY{n}{get\PYZus{}additonal\PYZus{}k\PYZus{}split}\PY{p}{(}\PY{n}{K}\PY{p}{,} \PY{n}{X}\PY{p}{,} \PY{n}{clst\PYZus{}labels}\PY{p}{,} \PY{n}{clst\PYZus{}centers}\PY{p}{,} \PY{n}{n\PYZus{}features}\PY{p}{,} \PY{n}{K\PYZus{}sub}\PY{p}{,} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{k\PYZus{}means\PYZus{}args}\PY{p}{)}
-                    \PY{n}{K} \PY{o}{+}\PY{o}{=} \PY{n}{add\PYZus{}k}
-                    \PY{c+c1}{\PYZsh{} stop splitting clusters when BIC stopped increasing or if max number of clusters in reached}
-                    \PY{n}{stop\PYZus{}splitting} \PY{o}{=} \PY{n}{K\PYZus{}old} \PY{o}{==} \PY{n}{K} \PY{o+ow}{or} \PY{n}{K} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{KMax}
-                    \PY{n}{iter\PYZus{}num} \PY{o}{=} \PY{n}{iter\PYZus{}num} \PY{o}{+} \PY{l+m+mi}{1}
-                \PY{c+c1}{\PYZsh{} Run vanilla KMeans with the number of clusters determined above}
-                \PY{n}{kmeans} \PY{o}{=} \PY{n}{KMeans}\PY{p}{(}\PY{n}{n\PYZus{}clusters}\PY{o}{=}\PY{n}{K\PYZus{}old}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{k\PYZus{}means\PYZus{}args}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X}\PY{p}{)}
-                \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{labels\PYZus{}} \PY{o}{=} \PY{n}{kmeans}\PY{o}{.}\PY{n}{labels\PYZus{}}
-                \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{cluster\PYZus{}centers\PYZus{}} \PY{o}{=} \PY{n}{kmeans}\PY{o}{.}\PY{n}{cluster\PYZus{}centers\PYZus{}}
-                \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{inertia\PYZus{}} \PY{o}{=} \PY{n}{kmeans}\PY{o}{.}\PY{n}{inertia\PYZus{}}
-                \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{n\PYZus{}clusters} \PY{o}{=} \PY{n}{K\PYZus{}old}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{All computed alpha: }\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{allAlpha}\PY{p}{)}
+        \PY{n}{SequenceProbability}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{alpha}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{The probability of the given sequence is: }\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{SequenceProbability}\PY{p}{)}
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}3}]:} \PY{c+c1}{\PYZsh{}Create X\PYZhy{}Means Instance}
-        \PY{n}{x\PYZus{}means} \PY{o}{=} \PY{n}{XMeans}\PY{p}{(}\PY{n}{kmax}\PY{o}{=}\PY{l+m+mi}{50}\PY{p}{,} \PY{n}{max\PYZus{}iter}\PY{o}{=}\PY{l+m+mi}{1000}\PY{p}{)}
-        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Fitting data...}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-        \PY{n}{x\PYZus{}means}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{features}\PY{p}{)}
-        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Predicted labels: }\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{x\PYZus{}means}\PY{o}{.}\PY{n}{labels\PYZus{}}\PY{p}{)}
-        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Predicted cluster centers: }\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{x\PYZus{}means}\PY{o}{.}\PY{n}{cluster\PYZus{}centers\PYZus{}}\PY{p}{)}
-        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Predicted number of clusters: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{x\PYZus{}means}\PY{o}{.}\PY{n}{n\PYZus{}clusters}\PY{p}{)}
-\end{Verbatim}
+The given sequence is: 
+ [ 0.7  0.7  0.1  0.2  0.3  0.6  0.2  0.3 -0.1  0.2]
 
+All computed alpha: 
+ [[1.25249788e-02 5.00000000e-01 3.13750187e-04 5.00000000e-01
+  5.46948488e-04 5.00000000e-01 4.70128182e-04 5.00000000e-01
+  1.99247818e-04 5.00000000e-01 1.01226248e-05 5.00000000e-01
+  8.70087643e-06 5.00000000e-01 3.68757012e-06 5.00000000e-01
+  6.42839746e-06 0.00000000e+00 5.52551270e-06 0.00000000e+00]
+ [1.25249788e-02 5.00000000e-01 3.13750187e-04 5.00000000e-01
+  5.46948488e-04 5.00000000e-01 4.70128182e-04 5.00000000e-01
+  1.99247818e-04 5.00000000e-01 1.01226248e-05 5.00000000e-01
+  8.70087643e-06 5.00000000e-01 3.68757012e-06 5.00000000e-01
+  6.42839746e-06 0.00000000e+00 5.52551270e-06 0.00000000e+00]]
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-Fitting data{\ldots}
-Predicted labels: 
- [0 0 0 0 0 0 2 0 1 0 0 1 1 0 0 0 0 1 0 1 0 1 1 1 1 0 0 0 0 0 1 0 0 0 2 0 0
- 0 2 0 0 1 0 0 1 1 0 1 0 0 2 0 0 2 1 2 1 0 0 0 1 0 2 0 0 0 0 1 1 0 0 2 1 1
- 0 0 1 0 1 0 0 1 0 0 0 1 0 1 0 0 0 1 0 0 0 0 0 0 1 2 2 1 1 0 1 1 1 0 0 0 0
- 1 0 0 0 0 1 2 1 0 0 0 0 0 0 1 1 1 0 1 1 1 1 0 1 0 1 0 0 0 0 1 0 0 1 0 0 0
- 0 0 1 1 1 0 0 2 0 0 1 1 1 0 1 0 0 0 0 1 0 1 0 0 0 1 0 0 0 0 0 0 1 1 0 0 2
- 0 0 0 1 0 0 1 0 0 0 0 1 0 0 1 0 0 1 0 1 1 1 1 0 1]
-Predicted cluster centers: 
- [[163.83        57.36255469]
- [181.37072464  74.63976812]
- [188.15538462 106.31607692]]
-Predicted number of clusters:  3
+The probability of the given sequence is: 
+ 1.1051025390323771e-05
 
     \end{Verbatim}
 
-    What's the criterion to choose the number of clusters?
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}4}]:} \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{To choose the best number of clusters, i.e. the best model, the authors proposed the BIC scoring.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Assuming that we have the data, D, and a a family of alternative models, Mj (where each solution corresponds to a different K value), in order to choose the best model, the posterior probabilities, P(Mj | D), are used to score the models.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{In this case, since all models are of the K\PYZhy{}Means assumed type (spherical Gaussians), to approximate the posteriors, up to normalization, they apply the BIC formula, from Kass and Wasserman (1995).}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{This is also known as the Schwarz criterion.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-To choose the best number of clusters, i.e. the best model, the authors proposed the BIC scoring.
-Assuming that we have the data, D, and a a family of alternative models, Mj (where each solution corresponds to a different K value), in order to choose the best model, the posterior probabilities, P(Mj | D), are used to score the models.
-In this case, since all models are of the K-Means assumed type (spherical Gaussians), to approximate the posteriors, up to normalization, they apply the BIC formula, from Kass and Wasserman (1995).
-This is also known as the Schwarz criterion.
-
-    \end{Verbatim}
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor} }]:} \PY{c+c1}{\PYZsh{}b) Another approach that uses pyclustering library, that is based on another article.}
-        \PY{c+c1}{\PYZsh{}In case of usage of pyclustering}
-        \PY{c+c1}{\PYZsh{}!pip install pyclustering}
-        
-        \PY{k+kn}{from} \PY{n+nn}{pyclustering}\PY{n+nn}{.}\PY{n+nn}{cluster} \PY{k}{import} \PY{n}{cluster\PYZus{}visualizer}
-        \PY{k+kn}{from} \PY{n+nn}{pyclustering}\PY{n+nn}{.}\PY{n+nn}{cluster}\PY{n+nn}{.}\PY{n+nn}{xmeans} \PY{k}{import} \PY{n}{xmeans}
-        \PY{k+kn}{from} \PY{n+nn}{pyclustering}\PY{n+nn}{.}\PY{n+nn}{cluster}\PY{n+nn}{.}\PY{n+nn}{center\PYZus{}initializer} \PY{k}{import} \PY{n}{kmeans\PYZus{}plusplus\PYZus{}initializer}
-        \PY{k+kn}{from} \PY{n+nn}{pyclustering}\PY{n+nn}{.}\PY{n+nn}{utils} \PY{k}{import} \PY{n}{read\PYZus{}sample}
-        \PY{k+kn}{from} \PY{n+nn}{pyclustering}\PY{n+nn}{.}\PY{n+nn}{samples}\PY{n+nn}{.}\PY{n+nn}{definitions} \PY{k}{import} \PY{n}{SIMPLE\PYZus{}SAMPLES}
-        \PY{c+c1}{\PYZsh{} Read sample \PYZsq{}simple3\PYZsq{} from file.}
-        \PY{n}{sample} \PY{o}{=} \PY{n}{features}
-        \PY{c+c1}{\PYZsh{} Prepare initial centers \PYZhy{} amount of initial centers defines amount of clusters from which X\PYZhy{}Means will}
-        \PY{c+c1}{\PYZsh{} start analysis.}
-        \PY{n}{amount\PYZus{}initial\PYZus{}centers} \PY{o}{=} \PY{l+m+mi}{2}
-        \PY{n}{initial\PYZus{}centers} \PY{o}{=} \PY{n}{kmeans\PYZus{}plusplus\PYZus{}initializer}\PY{p}{(}\PY{n}{sample}\PY{p}{,} \PY{n}{amount\PYZus{}initial\PYZus{}centers}\PY{p}{)}\PY{o}{.}\PY{n}{initialize}\PY{p}{(}\PY{p}{)}
-        \PY{c+c1}{\PYZsh{} Create instance of X\PYZhy{}Means algorithm. The algorithm will start analysis from 2 clusters, the maximum}
-        \PY{c+c1}{\PYZsh{} number of clusters that can be allocated is 20.}
-        \PY{n}{xmeans\PYZus{}instance} \PY{o}{=} \PY{n}{xmeans}\PY{p}{(}\PY{n}{sample}\PY{p}{,} \PY{n}{initial\PYZus{}centers}\PY{p}{,} \PY{l+m+mi}{20}\PY{p}{)}
-        \PY{n}{xmeans\PYZus{}instance}\PY{o}{.}\PY{n}{process}\PY{p}{(}\PY{p}{)}
-        \PY{c+c1}{\PYZsh{} Extract clustering results: clusters and their centers}
-        \PY{n}{clusters} \PY{o}{=} \PY{n}{xmeans\PYZus{}instance}\PY{o}{.}\PY{n}{get\PYZus{}clusters}\PY{p}{(}\PY{p}{)}
-        \PY{n}{centers} \PY{o}{=} \PY{n}{xmeans\PYZus{}instance}\PY{o}{.}\PY{n}{get\PYZus{}centers}\PY{p}{(}\PY{p}{)}
-        \PY{c+c1}{\PYZsh{} Visualize clustering results}
-        \PY{n}{visualizer} \PY{o}{=} \PY{n}{cluster\PYZus{}visualizer}\PY{p}{(}\PY{p}{)}
-        \PY{n}{visualizer}\PY{o}{.}\PY{n}{append\PYZus{}clusters}\PY{p}{(}\PY{n}{clusters}\PY{p}{,} \PY{n}{sample}\PY{p}{)}
-        \PY{n}{visualizer}\PY{o}{.}\PY{n}{append\PYZus{}cluster}\PY{p}{(}\PY{n}{centers}\PY{p}{,} \PY{k+kc}{None}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{*}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-        \PY{n}{visualizer}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
-\end{Verbatim}
-
+    Tiago Filipe Sousa Gonçalves \textbar{} MIB \textbar{} 2018/2019
 
 
     % Add a bibliography block to the postdoc
